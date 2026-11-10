@@ -26,6 +26,16 @@ class Model:
         :return: lista di tuple --> (nome del distributore, media), es. (Distributore A, 1.789)
         """
         # TODO
+        self.lista_dist_avg = []
+        for distributore in self._distributori:
+            prezzi_per_mese = [] # svuoto la lista ogni volta che passo ad un nuovo distributore
+            distributore.get_prezzi()
+            for prezzo in distributore.lista_prezzi :
+                if prezzo.data.month == mese: # controllo sul mese, data è un oggetto di tipo datetime.date con attributo month
+                    prezzi_per_mese.append(float(prezzo.prezzo_litro))         #che restituisce un intero in base al mese corrispondente
+            prezzo_medio = sum(prezzi_per_mese) / len(prezzi_per_mese)
+            self.lista_dist_avg.append((distributore.nome, prezzo_medio))
+        return self.lista_dist_avg
 
     def get_sequenza_ottima(self, mese:int):
         """
