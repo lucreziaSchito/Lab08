@@ -57,6 +57,25 @@ class Model:
     def __ricorsione(self, sequenza_parziale, giorno, ultimo_distributore, costo_corrente, prezzi_settimana):
         """ Implementa la ricorsione """
         # TODO
+        '''if giorno == 7 :
+            return sequenza_parziale
+        else :
+            comparazione = []
+            for distributore in self._distributori:
+                prez_litro = prezzi_settimana[distributore.id][giorno-1]
+                if ultimo_distributore == distributore.id or ultimo_distributore is None:
+                    costo = float(prez_litro)*100
+                else :
+                    costo = 5 + float(prez_litro)*100
+                comparazione.append((distributore.id, costo))
+            prezzo_migliore = min(comparazione, key=lambda x: x[1])
+            ultimo_distributore = prezzo_migliore[0]
+            sequenza_parziale.append(ultimo_distributore)
+            giorno += 1
+            costo_corrente += prezzo_migliore[1]
+            return self.__ricorsione(sequenza_parziale, giorno, ultimo_distributore, costo_corrente, prezzi_settimana)'''
+        # prima idea di ricorsione con backtracking : ancora da spiegare !
+
 
     def __get_prezzi_prima_settimana_mese(self, mese: int):
         """
@@ -64,3 +83,12 @@ class Model:
         :return: un dizionario: {id_distributore: [prezzo_giorno1, ..., prezzo_giorno7]}
         """
         # TODO
+        self.dict_prima_settimana = {}
+        for distributore in self._distributori:
+            prezzi_prima_settimna = []
+            distributore.get_prezzi()
+            for prezzo in distributore.lista_prezzi:
+                if prezzo.data.month == mese and prezzo.data.day in (1, 2, 3, 4, 5, 6, 7):
+                    prezzi_prima_settimna.append((float(prezzo.prezzo_litro)))
+            self.dict_prima_settimana[distributore.id] = prezzi_prima_settimna
+        return self.dict_prima_settimana
