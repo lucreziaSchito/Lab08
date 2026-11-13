@@ -57,24 +57,38 @@ class Model:
     def __ricorsione(self, sequenza_parziale, giorno, ultimo_distributore, costo_corrente, prezzi_settimana):
         """ Implementa la ricorsione """
         # TODO
-        '''if giorno == 7 :
-            return sequenza_parziale
-        else :
-            comparazione = []
-            for distributore in self._distributori:
-                prez_litro = prezzi_settimana[distributore.id][giorno-1]
-                if ultimo_distributore == distributore.id or ultimo_distributore is None:
-                    costo = float(prez_litro)*100
-                else :
-                    costo = 5 + float(prez_litro)*100
-                comparazione.append((distributore.id, costo))
-            prezzo_migliore = min(comparazione, key=lambda x: x[1])
-            ultimo_distributore = prezzo_migliore[0]
-            sequenza_parziale.append(ultimo_distributore)
-            giorno += 1
-            costo_corrente += prezzo_migliore[1]
-            return self.__ricorsione(sequenza_parziale, giorno, ultimo_distributore, costo_corrente, prezzi_settimana)'''
-        # prima idea di ricorsione con backtracking : ancora da spiegare !
+        if len(sequenza_parziale) == 7:
+            if self.__costo_ottimo == -1 or costo_corrente < self.__costo_ottimo:
+                self.__costo_ottimo = costo_corrente
+                # eseguo una copia della lista, altrimenti le modifiche successive,tramite pop(),
+                # sovrascriveranno anche la sequenza ottima salvata
+                self.__sequenza_ottima = list(sequenza_parziale)
+            return
+
+        # interrompo l'esplorazione del ramo se il costo parziale ha già superato il costo ottimo attuale
+        if self.__costo_ottimo != -1 and costo_corrente >= self.__costo_ottimo:
+            return
+
+
+        for distributore in self._distributori:
+            prezzo_litro = prezzi_settimana[distributore.id][giorno - 1]
+
+            costo_giornaliero = float(prezzo_litro) * 100
+
+            if ultimo_distributore is not None and ultimo_distributore != distributore.id:
+                costo_giornaliero += 5
+            sequenza_parziale.append(distributore.id)
+
+            self.__ricorsione(sequenza_parziale,
+                              giorno + 1,
+                              distributore.id,
+                              costo_corrente + costo_giornaliero,
+                              prezzi_settimana)
+
+            # BACKTRACKING
+            # finito di esplorare un ramo, rimuovo l'ultimo elemento e passo all'altro ramo possibile: l'altro distributore
+            # per poi scegliere quello più conveniente nella prima parte della funzione __ricorsione
+            sequenza_parziale.pop()
 
 
     def __get_prezzi_prima_settimana_mese(self, mese: int):
