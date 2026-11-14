@@ -103,6 +103,9 @@ class Model:
             distributore.get_prezzi()
             for prezzo in distributore.lista_prezzi:
                 if prezzo.data.month == mese and prezzo.data.day in (1, 2, 3, 4, 5, 6, 7):
-                    prezzi_prima_settimna.append((float(prezzo.prezzo_litro)))
-            self.dict_prima_settimana[distributore.id] = prezzi_prima_settimna
+                    #aggiungo una tupla (giorno, prezzo) per avere la certezza che i giorni si trovino nell'ordine giusto
+                    prezzi_prima_settimna.append((prezzo.data.day, float(prezzo.prezzo_litro)))
+            prezzi_prima_settimna.sort(key=lambda x: x[0]) #ordino la lista in base al valore del giorno
+            # memorizzo solo i prezzi (certamente) ordinati nel dizionario
+            self.dict_prima_settimana[distributore.id] = [p[1] for p in prezzi_prima_settimna]
         return self.dict_prima_settimana
